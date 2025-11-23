@@ -2,6 +2,8 @@
 
 namespace App;
 
-abstract class MicroService extends \App\Factory\MicroServiceFactory
+use App\Factory\ServiceFactory;
+
+abstract class MicroService extends ServiceFactory
 {
 }

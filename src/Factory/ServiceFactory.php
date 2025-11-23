@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-abstract class MicroServiceFactory
+abstract class ServiceFactory
 {
     abstract public function run(): void;
 }
