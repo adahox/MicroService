@@ -1,17 +1,13 @@
 <?php
 
-require './vendor/autoload.php';
+namespace App;
 
-use App\MicroService;
+use App\Job\UnfollowJob;
+use stdClass;
 
-class App extends MicroService
-{
-    public function run(): void
-    {
-        echo "running app";
-    }
-}
+require "./vendor/autoload.php";
 
-$app = new App();
+$user = new stdClass();
+$user->user_id = 10;
 
-$app->run();
+UnfollowJob::dispatch($user)->onQueue("instagram");
