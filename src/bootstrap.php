@@ -6,8 +6,13 @@ use App\Rabbit\Rabbit;
 use App\Rabbit\RabbitConnection;
 use DI\ContainerBuilder;
 
+// Armazena a instância do container construída no bootstrap.
+$container = null;
+
 function bootstrap()
 {
+    global $container;
+
     $containerBuilder = new ContainerBuilder();
 
     $containerBuilder->addDefinitions([
@@ -17,7 +22,7 @@ function bootstrap()
         ),
     ]);
 
-    $containerBuilder->build();
+    $container = $containerBuilder->build();
 }
 
 /**
@@ -25,7 +30,13 @@ function bootstrap()
  */
 function app(string $name): mixed
 {
-    $container = new \DI\Container();
+    global $container;
+
+    // Garante que o container seja inicializado antes do uso.
+    if ($container === null) {
+        bootstrap();
+    }
+
     $instance = $container->get($name);
 
     return $instance;
