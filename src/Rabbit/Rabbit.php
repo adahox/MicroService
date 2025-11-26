@@ -2,45 +2,29 @@
 
 namespace App\Rabbit;
 
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use App\Rabbit\RabbitConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class Rabbit
 {
-    public static function publish(
-        string $queueName,
-        string $serializedJob,
-    ): void {
-        # Conecta no rabbitMQ
-        $connection = new AMQPStreamConnection(
-            "172.25.129.244",
-            5672,
-            "admin",
-            "admin",
-        );
-        $channel = $connection->channel();
-        # Implementa a Fila
-        $channel->queue_declare($queueName, false, false, false, false);
-        # Prepara a Msg
-        $msg = new AMQPMessage($serializedJob);
-        # Joga na Fila
-        $channel->basic_publish($msg, "", $queueName);
-        # Fecha as conexões
-        $channel->close();
-        $connection->close();
+    public function __construct(private RabbitConnection $connection)
+    {
+        #
     }
 
-    public static function subscribe(string $queueName = "UnfollowJob"): void
+    public function publish(string $queueName, string $serializedJob): void
     {
-        # code.
-        $connection = new AMQPStreamConnection(
-            "172.25.129.244",
-            5672,
-            "admin",
-            "admin",
-        );
+        $channel = $this->connection->channel();
+        $channel->queue_declare($queueName, false, false, false, false);
+        $msg = new AMQPMessage($serializedJob);
+        $channel->basic_publish($msg, "", $queueName);
+        $channel->close();
+        $this->connection->close();
+    }
 
-        $channel = $connection->channel();
+    public function subscribe(string $queueName): void
+    {
+        $channel = $this->connection->channel();
 
         $channel->basic_consume(
             $queueName,
@@ -49,7 +33,20 @@ class Rabbit
             true,
             false,
             false,
-            null, # callback
+            function (AMQPMessage $msg) {
+                $data = json_decode($msg->getBody(), true);
+
+                $jobClass = $data["job"];
+                $method = $data["method"];
+                $payload = (object) $data["payload"];
+
+                /** @var object $job */
+                $job = new $jobClass($payload);
+
+                // Chama o método configurado
+                echo "Executado {$jobClass}::{$method}\r\n";
+                $job->$method($payload);
+            },
         );
 
         try {
@@ -57,5 +54,7 @@ class Rabbit
         } catch (\Throwable $exception) {
             echo $exception->getMessage();
         }
+
+        $this->connection->close();
     }
 }

@@ -1,16 +1,26 @@
 <?php
 
-namespace App;
-
 require "./vendor/autoload.php";
 
-use App\Rabbit\Rabbit;
+use App\Facades\Rabbit;
+use DI\Container;
+use DI\ContainerBuilder;
 
-# php queue subscribe:UnfollowJob
-if ($argc <= 1) {
-    throw new \Error("We need to implement o -h here at this case.");
+try {
+    $builder = new ContainerBuilder();
+    $container = $builder->build();
+
+    $rabbit = $container->get(Rabbit::class);
+
+    if ($argc <= 1) {
+        throw new \Error("We need to implement '-h' command here.");
+    }
+
+    [$process, $queueName] = explode(":", $argv[1]);
+
+    Rabbit::{$process}($queueName);
+
+} catch (\Exception $e)
+{
+   echo $e->getMessage();
 }
-
-[$process, $queueName] = explode(":", $argv[1]);
-
-Rabbit::{$process}($queueName);

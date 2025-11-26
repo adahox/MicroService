@@ -2,27 +2,29 @@
 
 namespace App\Trait\Queue;
 
-use App\Rabbit\Rabbit;
+use App\Facades\Rabbit;
 
 trait Queueable
 {
     public static function dispatch(mixed $payload): self
     {
-        $job = new static($payload);
-
-        $job->handle();
-
         $queueName = basename(str_replace("\\", "/", static::class));
 
-        $serialized = serialize($job);
+        $static = new static($payload);
 
-        Rabbit::publish($queueName, $serialized);
+        $body = json_encode([
+            "job" => static::class,
+            "method" => "handle",
+            "payload" => $payload,
+        ]);
 
-        return $job;
+        Rabbit::publish($queueName, $body);
+
+        return $static;
     }
 
-    public function onQueue(string $channel): void
+    public function onQueue(string $queueName): void
     {
-        # TODO: Implement after
+        #
     }
 }

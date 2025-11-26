@@ -20,6 +20,18 @@ class UnfollowJob implements Queue
     public function handle(): void
     {
         # acessa o instagram
-        echo "Unfollow Running...";
+        if (
+            \mail(
+                $this->payload->email,
+                "Mensageria - teste",
+                "Este é apenas um teste de mensageria.\r\nAtt,\r\nAdão Dias",
+            )
+        ) {
+            echo "E-mail enviado com sucesso!";
+
+            return;
+        }
+
+        echo "E-mail não foi enviado.";
     }
 }
