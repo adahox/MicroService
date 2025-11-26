@@ -1,17 +1,11 @@
 <?php
 
 require "./vendor/autoload.php";
+require "./src/bootstrap.php";
 
 use App\Facades\Rabbit;
-use DI\Container;
-use DI\ContainerBuilder;
 
 try {
-    $builder = new ContainerBuilder();
-    $container = $builder->build();
-
-    $rabbit = $container->get(Rabbit::class);
-
     if ($argc <= 1) {
         throw new \Error("We need to implement '-h' command here.");
     }
