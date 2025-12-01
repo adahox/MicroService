@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Trait\Queue;
+namespace App\Traits\Queue;
 
 use App\Facades\Rabbit;
 
@@ -25,6 +25,6 @@ trait Queueable
 
     public function onQueue(string $queueName): void
     {
-        #
+        # TODO: should be implemented late.
     }
 }

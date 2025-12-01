@@ -16,9 +16,8 @@ function bootstrap()
     $containerBuilder = new ContainerBuilder();
 
     $containerBuilder->addDefinitions([
-        RabbitConnection::class => \DI\create(RabbitConnection::class),
         Rabbit::class => \DI\create(Rabbit::class)->constructor(
-            RabbitConnection::class,
+            \DI\get(RabbitConnection::class),
         ),
     ]);
 

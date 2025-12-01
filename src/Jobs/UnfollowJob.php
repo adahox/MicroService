@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Job;
+namespace App\Jobs;
 
 use App\Contracts\Queue;
-use App\Trait\Queue\Queueable;
+use App\Traits\Queue\Queueable;
 
 class UnfollowJob implements Queue
 {

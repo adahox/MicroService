@@ -2,11 +2,11 @@
 
 namespace App;
 
-use App\Job\UnfollowJob;
+use App\Jobs\UnfollowJob;
 use stdClass;
 
 require "./vendor/autoload.php";
-require "./src/bootstrap.php";
+require "bootstrap.php";
 
 $user = new stdClass();
 $user->user_id = 10;

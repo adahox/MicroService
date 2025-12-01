@@ -1,7 +1,7 @@
 <?php
 
 require "./vendor/autoload.php";
-require "./src/bootstrap.php";
+require "bootstrap.php";
 
 use App\Facades\Rabbit;
 
